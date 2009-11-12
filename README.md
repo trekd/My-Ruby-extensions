@@ -7,7 +7,7 @@ It's a copy-pasted class from [Rack::Utils](http://rack.rubyforge.org/doc/classe
 
 If you have a form like this, ...
 
-	<form action="/cgi-bin/formtest.rb" method="get">
+	<form action="/action.rb" method="post">
 		<table id="attendance">
 			<tr class="table-header">
 				<th>Name</th>
@@ -27,7 +27,7 @@ If you have a form like this, ...
 
 with this extension you can get the **nested parameters** as a **Hash**.
 
-Simply just call the `CGI.nested_params` method after you created the *CGI* object.
+Simply just require the extension class, and your request params are in the right structure.
 
 	{"att"=>
 		{

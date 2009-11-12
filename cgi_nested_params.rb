@@ -1,42 +1,23 @@
 class CGI
-	
-	def nested_params()
-		@params = parse_nested_query(
-			case env_table['REQUEST_METHOD']
-				when "GET", "HEAD"
-					if defined?(MOD_RUBY)
-						Apache::request.args or ""
-					else
-						env_table['QUERY_STRING'] or ""
-					end
-				when "POST"
-					stdinput.binmode if defined? stdinput.binmode
-					stdinput.read(Integer(env_table['CONTENT_LENGTH'])) or ''
-				else
-					read_from_cmdline
-				end
-		)
-	end
-	
-	def parse_nested_query(qs, d = '&;')
-		params = {}
 
+	def CGI::parse(qs, d = '&;')
+		params = {}
+		
 		(qs || '').split(/[#{d}] */n).each do |p|
 			k, v = unescape_uri(p).split('=', 2)
 			normalize_params(params, k, v)
 		end
-
+		
 		return params
 	end
-	private :parse_nested_query
 
-	def normalize_params(params, name, v = nil)
+	def CGI::normalize_params(params, name, v = nil)
 		name =~ %r([\[\]]*([^\[\]]+)\]*)
 		k = $1 || ''
 		after = $' || ''
-
+		
 		return if k.empty?
-
+		
 		if after == ""
 			params[k] = v
 		elsif after == "[]"
@@ -56,12 +37,11 @@ class CGI
 			params[k] ||= {}
 			params[k] = normalize_params(params[k], after, v)
 		end
-
+		
 		return params
 	end
-	private :normalize_params
 
-	def unescape_uri(s)
+	def CGI::unescape_uri(s)
 		s.tr('+', ' ').gsub(/((?:%[0-9a-fA-F]{2})+)/n){
 			[$1.delete('%')].pack('H*')
 		}
