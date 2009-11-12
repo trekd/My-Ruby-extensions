@@ -47,4 +47,25 @@ class CGI
 		}
 	end
 	
+	module QueryExtension    # :nodoc:
+		def [](key)
+			params = @params[key]
+			return '' unless params
+			value = params
+			if @multipart
+				if value
+					return value
+				elsif defined? StringIO
+					StringIO.new("")
+				else
+					Tempfile.new("CGI")
+				end
+			else
+				str = if value then value.dup else "" end
+				str.extend(Value)
+				str.set_params(params)
+				str
+			end
+		end
+	end
 end
